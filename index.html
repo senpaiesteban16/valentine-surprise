@@ -7,6 +7,7 @@
   <style>
     body {
       margin:0;
+      padding:0;
       height:100vh;
       display:flex;
       justify-content:center;
@@ -21,29 +22,41 @@
 
     h1 {
       font-size:50px;
-      animation: fadeIn 2s ease-in-out;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 0.15em solid white;
+      width: 0;
     }
 
-    p {
-      font-size:22px;
-      margin-top:10px;
-      animation: fadeIn 3s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from {opacity:0; transform: translateY(20px);}
-      to {opacity:1; transform: translateY(0);}
-    }
-
-    .heart {
+    .heart, .petal {
       position:absolute;
-      color:white;
-      animation: float 6s infinite ease-in;
+      animation: float 10s infinite linear;
     }
 
     @keyframes float {
       from {transform: translateY(100vh);}
       to {transform: translateY(-10vh);}
+    }
+
+    .button-container {
+      margin-top: 30px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .valentine-btn {
+      padding: 15px 30px;
+      background:#ff4d88;
+      border:none;
+      border-radius:50px;
+      color:white;
+      font-size:20px;
+      cursor:pointer;
+      transition: transform 0.2s;
+    }
+
+    .valentine-btn:hover {
+      transform: scale(1.1);
     }
   </style>
 </head>
@@ -51,7 +64,11 @@
 <body>
 
 <h1 id="greeting"></h1>
-<p>You’re stuck with me forever 😘</p>
+
+<div class="button-container">
+  <button class="valentine-btn" onclick="alert('You chose YES! 💖 I love you!')">Yes 💘</button>
+  <button class="valentine-btn" onclick="alert('Of course! 💖 Can’t say no to you!')">Yes 💝</button>
+</div>
 
 <audio autoplay loop>
   <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
@@ -62,24 +79,34 @@
   const params = new URLSearchParams(window.location.search);
   const name = params.get("name") || "babe";
 
-  document.getElementById("greeting").innerText =
-    "Happy Valentine's Day, " + name + " 💖";
+  const text = "Happy Valentine's Day, " + name + " 💖";
+  const greeting = document.getElementById("greeting");
+  let index = 0;
 
-  // Floating hearts
-  function createHeart() {
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    heart.innerHTML = "💗";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = Math.random() * 30 + 20 + "px";
-    document.body.appendChild(heart);
+  function typeLetter() {
+    if(index < text.length) {
+      greeting.innerHTML += text.charAt(index);
+      index++;
+      setTimeout(typeLetter, 120);
+    }
+  }
+  typeLetter();
 
-    setTimeout(() => {
-      heart.remove();
-    }, 6000);
+  // Floating hearts and rose petals
+  function createFloatElement(symbol, className) {
+    const el = document.createElement("div");
+    el.classList.add(className);
+    el.innerHTML = symbol;
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.fontSize = Math.random() * 30 + 20 + "px";
+    document.body.appendChild(el);
+
+    setTimeout(() => el.remove(), 10000);
   }
 
-  setInterval(createHeart, 500);
+  setInterval(() => createFloatElement("💗", "heart"), 500);
+  setInterval(() => createFloatElement("🌹", "petal"), 700);
+
 </script>
 
 </body>
