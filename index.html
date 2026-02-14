@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>For You ❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin:0;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      background: linear-gradient(135deg, #ff4d88, #ff99cc);
+      font-family: 'Segoe UI', sans-serif;
+      color:white;
+      text-align:center;
+      overflow:hidden;
+    }
+
+    h1 {
+      font-size:50px;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    p {
+      font-size:22px;
+      margin-top:10px;
+      animation: fadeIn 3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {opacity:0; transform: translateY(20px);}
+      to {opacity:1; transform: translateY(0);}
+    }
+
+    .heart {
+      position:absolute;
+      color:white;
+      animation: float 6s infinite ease-in;
+    }
+
+    @keyframes float {
+      from {transform: translateY(100vh);}
+      to {transform: translateY(-10vh);}
+    }
+  </style>
+</head>
+
+<body>
+
+<h1 id="greeting"></h1>
+<p>You’re stuck with me forever 😘</p>
+
+<audio autoplay loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  // Name personalization from URL
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get("name") || "babe";
+
+  document.getElementById("greeting").innerText =
+    "Happy Valentine's Day, " + name + " 💖";
+
+  // Floating hearts
+  function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "💗";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = Math.random() * 30 + 20 + "px";
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+      heart.remove();
+    }, 6000);
+  }
+
+  setInterval(createHeart, 500);
+</script>
+
+</body>
+</html>
