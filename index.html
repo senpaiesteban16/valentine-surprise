@@ -25,23 +25,34 @@
       white-space: nowrap;
       overflow: hidden;
       border-right: 0.15em solid white;
-      width: 0;
+      width:0;
+      opacity:0;
+      animation: fadeIn 2s forwards;
+      animation-delay: 0.5s;
     }
 
-    .heart, .petal {
+    .heart, .petal, .confetti, .explosion-heart {
       position:absolute;
       animation: float 10s infinite linear;
+      pointer-events:none;
     }
 
     @keyframes float {
-      from {transform: translateY(100vh);}
-      to {transform: translateY(-10vh);}
+      from {transform: translateY(100vh) rotate(0deg);}
+      to {transform: translateY(-10vh) rotate(360deg);}
+    }
+
+    @keyframes fadeIn {
+      to {opacity:1; width:auto;}
     }
 
     .button-container {
-      margin-top: 30px;
+      margin-top: 40px;
       display: flex;
-      gap: 20px;
+      gap: 25px;
+      opacity:0;
+      animation: fadeIn 2s forwards;
+      animation-delay: 3s;
     }
 
     .valentine-btn {
@@ -52,12 +63,40 @@
       color:white;
       font-size:20px;
       cursor:pointer;
-      transition: transform 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
 
     .valentine-btn:hover {
       transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255,255,255,0.8);
     }
+
+    /* Background subtle glow */
+    body::before {
+      content:'';
+      position:absolute;
+      width:200%;
+      height:200%;
+      top:-50%;
+      left:-50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);
+      animation: glow 6s infinite alternate;
+      z-index:0;
+    }
+
+    @keyframes glow {
+      0% {transform: rotate(0deg);}
+      100% {transform: rotate(360deg);}
+    }
+
+    #secret {
+      margin-top:30px;
+      font-size:24px;
+      opacity:0;
+      transition: opacity 2s;
+    }
+
   </style>
 </head>
 
@@ -66,9 +105,11 @@
 <h1 id="greeting"></h1>
 
 <div class="button-container">
-  <button class="valentine-btn" onclick="alert('You chose YES! 💖 I love you!')">Yes 💘</button>
-  <button class="valentine-btn" onclick="alert('Of course! 💖 Can’t say no to you!')">Yes 💝</button>
+  <button class="valentine-btn" onclick="loveExplosion('You chose YES! 💖 I love you!')">Yes 💘</button>
+  <button class="valentine-btn" onclick="loveExplosion('Of course! 💖 Can’t say no to you!')">Yes 💝</button>
 </div>
+
+<div id="secret">💌 Surprise! You’re my everything 💖</div>
 
 <audio autoplay loop>
   <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
@@ -92,20 +133,60 @@
   }
   typeLetter();
 
-  // Floating hearts and rose petals
-  function createFloatElement(symbol, className) {
+  // Floating hearts, petals, confetti
+  function createFloat(symbol, className) {
     const el = document.createElement("div");
     el.classList.add(className);
     el.innerHTML = symbol;
     el.style.left = Math.random() * 100 + "vw";
     el.style.fontSize = Math.random() * 30 + 20 + "px";
+    el.style.opacity = Math.random() * 0.8 + 0.2;
     document.body.appendChild(el);
-
     setTimeout(() => el.remove(), 10000);
   }
 
-  setInterval(() => createFloatElement("💗", "heart"), 500);
-  setInterval(() => createFloatElement("🌹", "petal"), 700);
+  setInterval(() => createFloat("💗", "heart"), 500);
+  setInterval(() => createFloat("🌹", "petal"), 700);
+  setInterval(() => createFloat("✨", "confetti"), 400);
+
+  // Reveal secret message after 10 seconds
+  setTimeout(() => {
+    document.getElementById("secret").style.opacity = 1;
+  }, 10000);
+
+  // Heart explosion on button click
+  function loveExplosion(msg) {
+    alert(msg);
+    for(let i=0;i<20;i++){
+      const heart = document.createElement("div");
+      heart.classList.add("explosion-heart");
+      heart.innerHTML = "💖";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.top = Math.random() * window.innerHeight + "px";
+      heart.style.fontSize = Math.random() * 40 + 20 + "px";
+      heart.style.opacity = 1;
+      document.body.appendChild(heart);
+
+      // Animate hearts flying outward
+      let dx = (Math.random()-0.5)*10;
+      let dy = (Math.random()-0.5)*10;
+      let rotation = Math.random()*360;
+
+      const anim = setInterval(()=>{
+        const top = parseFloat(heart.style.top);
+        const left = parseFloat(heart.style.left);
+        rotation += 5;
+        heart.style.top = (top+dy) + "px";
+        heart.style.left = (left+dx) + "px";
+        heart.style.transform = "rotate("+rotation+"deg)";
+        heart.style.opacity -= 0.02;
+        if(heart.style.opacity <= 0){
+          heart.remove();
+          clearInterval(anim);
+        }
+      },20);
+    }
+  }
 
 </script>
 
